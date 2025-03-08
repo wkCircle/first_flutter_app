@@ -41,19 +41,23 @@ class MyHomePage extends StatelessWidget {
     var pair = appState.current;
 
     return Scaffold(
-      body: Column(
-        children: [
-          const Text('A random idea:'),
-          BigCard(pair: pair),
-
-          ElevatedButton(
-            onPressed: () {
-              // print('button pressed!');
-              appState.getNext();  // ← 1. triggered on user click
-            },
-            child: Text('Next'),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('A random idea:'),
+            BigCard(pair: pair),
+            const SizedBox(height: 16),
+        
+            ElevatedButton(
+              onPressed: () {
+                // print('button pressed!');
+                appState.getNext();  // ← 1. triggered on user click
+              },
+              child: Text('Next'),
+            ),
+          ],
+        ),
       ),
     );
   }
