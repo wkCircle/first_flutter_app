@@ -56,6 +56,17 @@ class _MyHomePageState extends State<MyHomePage> {
   // 0-2 setState triggers the build and return the widget.
   @override
   Widget build(BuildContext context) {
+
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = GeneratorPage();
+      case 1:
+        page = Placeholder();
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
+
     return Scaffold(
       body: Row(
         children: [
@@ -83,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: Container(
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: GeneratorPage(),
+              child: page,
             )
           )
         ],
@@ -94,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class GeneratorPage extends StatelessWidget {
 
-  // 0-3: triggered from the parent Scaffold which contains the line that generate the page (child: GeneratorPage).
+  // 0-3: triggered from the parent Scaffold ONLY when selectedIndex=0.
   // 1-3 & 2-3 listeners trigger the build and return the widget.
   @override
   Widget build(BuildContext context) {
