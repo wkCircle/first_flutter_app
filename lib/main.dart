@@ -31,7 +31,7 @@ class MyAppState extends ChangeNotifier {
 
   void getNext() {
     current = WordPair.random();
-    notifyListeners();
+    notifyListeners();  // 2-2. notify listeners
   }
 
   void toggleFavorite() {
@@ -40,11 +40,20 @@ class MyAppState extends ChangeNotifier {
     } else {
       favorites.add(current);
     }
-    notifyListeners();
+    notifyListeners();  // 1-2. notify listeners
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+
+  int selectedIndex = 0;
+
+  // 0-2 setState triggers the build and return the widget.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,9 +72,11 @@ class MyHomePage extends StatelessWidget {
                   label: Text('Favorites'),
                 ),
               ],
-              selectedIndex: 0,
+              selectedIndex: selectedIndex,
               onDestinationSelected: (int index) {
-                print('Selected: $index');
+                setState(() {
+                  selectedIndex = index;  // 0-1. navigation rail click triggers the setState
+                });
               },
             )
           ),
@@ -82,6 +93,9 @@ class MyHomePage extends StatelessWidget {
 }
 
 class GeneratorPage extends StatelessWidget {
+
+  // 0-3: triggered from the parent Scaffold which contains the line that generate the page (child: GeneratorPage).
+  // 1-3 & 2-3 listeners trigger the build and return the widget.
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -108,7 +122,7 @@ class GeneratorPage extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  appState.toggleFavorite();
+                  appState.toggleFavorite();  // 1-1. click on Like button to trigger the call.
                 },
                 icon: Icon(icon),
                 label: Text(iconLabel),
@@ -116,7 +130,7 @@ class GeneratorPage extends StatelessWidget {
               const SizedBox(width: 16),
               ElevatedButton(
                 onPressed: () {
-                  appState.getNext();
+                  appState.getNext();  // 2-1. click on Next button and triggers the call.
                 },
                 child: const Text('Next'),
               ),
