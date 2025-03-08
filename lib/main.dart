@@ -38,12 +38,13 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) { // ← 3. triggered by the notifyListeners
     var appState = context.watch<MyAppState>();
+    var pair = appState.current;
 
     return Scaffold(
       body: Column(
         children: [
           const Text('A random idea:'),
-          BigCard(appState: appState),
+          BigCard(pair: pair),
 
           ElevatedButton(
             onPressed: () {
@@ -61,20 +62,27 @@ class MyHomePage extends StatelessWidget {
 class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
-    required this.appState,
+    required this.pair,
   });
 
-  final MyAppState appState;
+  final WordPair pair;
   
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context); 
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
     return Card(
       color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(appState.current.asLowerCase),
+        child: Text(
+          pair.asLowerCase,
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}", // Related to Google TalkBack for visually impaired users
+        ),
       ),
     );
   }
