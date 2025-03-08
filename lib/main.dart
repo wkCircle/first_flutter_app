@@ -27,18 +27,38 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
+  var favorites = <WordPair>[];
 
-  void getNext() { // ← 2. triggered by the button call
+  void getNext() {
     current = WordPair.random();
+    notifyListeners();
+  }
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
     notifyListeners();
   }
 }
 
 class MyHomePage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) { // ← 3. triggered by the notifyListeners
+  Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    
+    IconData icon;
+    String iconLabel;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+      iconLabel = 'Liked';
+    } else {
+      icon = Icons.favorite_border;
+      iconLabel = 'Like';
+    }
 
     return Scaffold(
       body: Center(
@@ -47,14 +67,25 @@ class MyHomePage extends StatelessWidget {
           children: [
             const Text('A random idea:'),
             BigCard(pair: pair),
-            const SizedBox(height: 16),
-        
-            ElevatedButton(
-              onPressed: () {
-                // print('button pressed!');
-                appState.getNext();  // ← 1. triggered on user click
-              },
-              child: Text('Next'),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    appState.toggleFavorite();
+                  },
+                  icon: Icon(icon),
+                  label: Text(iconLabel),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    appState.getNext();
+                  },
+                  child: const Text('Next'),
+                ),
+              ],
             ),
           ],
         ),
