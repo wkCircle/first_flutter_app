@@ -6,6 +6,12 @@ void main() {
   runApp(MyApp());
 }
 
+extension IntExtensions on int {
+  bool isValidIndex(int length) {
+    return this >= 0 && this < length;
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -34,13 +40,23 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();  // 2-2. notify listeners
   }
 
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
+  void toggleFavorite({required WordPair pair}) {
+    if (favorites.contains(pair)) {
+      favorites.remove(pair);
     } else {
-      favorites.add(current);
+      favorites.add(pair);
     }
     notifyListeners();  // 1-2. notify listeners
+  }
+
+  void favoriteRemove(dynamic item) {
+    if (item is WordPair) {
+      favorites.remove(item);
+    } 
+    else if (item is int && item.isValidIndex(favorites.length)) {
+      favorites.removeAt(item);
+    }
+    notifyListeners();
   }
 }
 
@@ -62,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = GeneratorPage();
       case 1:
-        page = Placeholder();
+        page = FavoritePage();
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -137,7 +153,7 @@ class GeneratorPage extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  appState.toggleFavorite();  // 1-1. click on Like button to trigger the call.
+                  appState.toggleFavorite(pair: pair);  // 1-1. click on Like button to trigger the call.
                 },
                 icon: Icon(icon),
                 label: Text(iconLabel),
@@ -156,6 +172,44 @@ class GeneratorPage extends StatelessWidget {
     );
   }
 }
+
+class FavoritePage extends StatelessWidget {
+  const FavoritePage({
+    super.key,
+  });
+  
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+    final favorites = appState.favorites;
+
+    if (appState.favorites.isEmpty) {
+      return const Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+    return ListView.builder(
+      itemCount: favorites.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: const Icon(Icons.favorite),
+          title: Text(favorites[index].asLowerCase),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              appState.favoriteRemove(index);
+              debugPrint("current favorites (len=${favorites.length}): \n$favorites");
+              debugPrint("appState favorites (len=${appState.favorites.length}): \n${appState.favorites}");
+              // appState.notifyListeners();
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
 
 
 class BigCard extends StatelessWidget {
