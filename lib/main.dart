@@ -199,9 +199,6 @@ class FavoritePage extends StatelessWidget {
             icon: const Icon(Icons.delete),
             onPressed: () {
               appState.favoriteRemove(index);
-              debugPrint("current favorites (len=${favorites.length}): \n$favorites");
-              debugPrint("appState favorites (len=${appState.favorites.length}): \n${appState.favorites}");
-              // appState.notifyListeners();
             },
           ),
         );
